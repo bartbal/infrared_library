@@ -10,6 +10,56 @@
 #include "irlib.hpp"
 #include <array>
 
+void pulse_head(due::d2_36kHz & transmitter){
+    transmitter.set(1);
+    hwlib::wait_us(800);
+    transmitter.set(0);
+    hwlib::wait_us(800);
+    transmitter.set(1);
+    hwlib::wait_us(800);
+    transmitter.set(0);
+    hwlib::wait_us(600); //pause
+}
+
+void pulse_end(due::d2_36kHz & transmitter){
+    transmitter.set(1);
+    hwlib::wait_us(2400);
+    transmitter.set(0);
+    
+    hwlib::wait_us(600); //pause
+
+}
+
+void pulse_null(due::d2_36kHz & transmitter){
+    hwlib::wait_us(600); //fisrt half of null
+    transmitter.set(1);
+    hwlib::wait_us(600);
+    transmitter.set(0);
+    
+    hwlib::wait_us(600); //pause
+}
+
+void pulse_one(due::d2_36kHz & transmitter){
+    transmitter.set(1);
+    hwlib::wait_us(1200);
+    transmitter.set(0);
+    hwlib::wait_us(600); //pause
+}
+
+void transmit(due::d2_36kHz & transmitter, hwlib::pin_in & button, hwlib::pin_out & led, int ms = 20){
+    while(1){
+        if(!button.get()){
+            led.set(1);
+            pulse_head(transmitter);    //3300us 
+            pulse_one(transmitter);     //5400us
+            pulse_null(transmitter);    //7500us
+            pulse_end(transmitter);     //9300us
+            led.set(0);
+            hwlib::wait_ms(200);
+        }
+
+    }
+}
 
 bool catch_head(hwlib::pin_in & reciever,  hwlib::pin_out & led){
     uint_fast64_t now = hwlib::now_us();
@@ -49,17 +99,11 @@ bool catch_head(hwlib::pin_in & reciever,  hwlib::pin_out & led){
     }
 }
 
-void recieve_now(irlib::irlib_recieve & recieve, hwlib::pin_out & green_led, hwlib::pin_out & yellow_led, int ms = 200){
+void recieve(hwlib::pin_in & reciever, hwlib::pin_out & yellow_led, hwlib::pin_out & green_led, int ms = 200){
     int ledstate = 0;
-    int length = 0;
     while(1){
-        if(recieve.listen_for_head()){
-            hwlib::wait_us(600);
-//            yellow_led.set(1);
-//            yellow_led.set(0);
-            length = recieve.catch_length(yellow_led);
-//            hwlib::cout << "recieve HEAD! length = " << static_cast<uint16_t>(length) << "\n";
-            hwlib::cout << "recieve HEAD! length = " << length << "\n";
+        if(catch_head(reciever, yellow_led)){
+            hwlib::cout << "recieve HEAD!\n";
             ledstate = !ledstate;
             green_led.set(ledstate);
         }
@@ -67,57 +111,45 @@ void recieve_now(irlib::irlib_recieve & recieve, hwlib::pin_out & green_led, hwl
     }
 }
 
-void transmit(irlib::irlib_transmit & transmitter, hwlib::target::pin_in & button){
+void fast_recieve(hwlib::pin_in & reciever, hwlib::pin_out & led, hwlib::pin_in & button, int us = 1){
+    bool old_temp = 1;
+    int temp = 1;
+    int time = 0;
     while(1){
-       if(!button.get()){
-           transmitter.pulse_head();
-            ////////////////////////////////////
-               transmitter.pulse_one();
-               transmitter.pulse_null();    
-                
-                transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
-            ////////////////////////////////////              
-           transmitter.pulse_end();
-       }
-       hwlib::wait_us(10);
-   }
+        if(!button.get()){
+            temp = reciever.get();
+            if(old_temp == 0 && temp == 1){
+                hwlib::cout << "_______" << time << "_________________\n";
+                time = 0;
+            }
+            old_temp = temp;
+            time++;
+        }
+        hwlib::wait_us(us);
+    }
 }
 
 int main( void ){	
    // kill the watchdog
    WDT->WDT_MR = WDT_MR_WDDIS;
    
-   // the on-board LED is connected to port B bit 27
+    the on-board LED is connected to port B bit 27
    auto green_led = hwlib::target::pin_out( hwlib::target::pins::d4 );
    auto yellow_led = hwlib::target::pin_out( hwlib::target::pins::d3 );
    
-//   auto transmitter = hwlib::target::pin_out( hwlib::target::pins::d10 );
+   auto transmitter = hwlib::target::pin_out( hwlib::target::pins::d10 );
    auto reciever = hwlib::target::pin_in( hwlib::target::pins::d11 );
    
    auto button = hwlib::target::pin_in( hwlib::target::pins::d7 );
    
    
-   irlib::irlib_transmit transmitter = irlib::irlib_transmit();
-   irlib::irlib_recieve recieve = irlib::irlib_recieve(reciever);
+
    
 //   auto d2_36khz = due::d2_36kHz();
 //        transmitter.set(1);
 //    transmitter.set(0);
-    recieve_now(recieve, green_led, yellow_led);
+    recieve(reciever, yellow_led, green_led);
 //    fast_recieve(reciever, yellow_led, button);
-//    transmit(transmitter, button);
+//    transmit(d2_36khz, button, green_led);
 
 }

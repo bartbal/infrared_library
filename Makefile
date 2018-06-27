@@ -9,10 +9,10 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES :=
+SOURCES := irlib.cpp
 
 # header files in this project
-HEADERS :=
+HEADERS := irlib.hpp irlib_recieve.hpp irlib_transmit.hpp
 
 # other places to look for files for this project
 SEARCH  := 
