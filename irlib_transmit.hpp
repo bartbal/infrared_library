@@ -6,6 +6,7 @@
 // ==========================================================================
 
 // this file contains Doxygen lines
+/// @file
 #include <algorithm>
 #include <array>
 #include "hwlib.hpp"
@@ -17,10 +18,18 @@ namespace irlib{
 
     public:
         
+        /// \brief   
+        /// transmit interface
+        /// \details
+        /// This class handels everything to transmit data over infrared
         irlib_transmit(int wait_us_time = 600):
             wait_us_time( wait_us_time )
         {}
         
+        /// \brief   
+        /// send head signal
+        /// \details
+        /// use this function to send the head signal. 
         void pulse_head(){
             transmitter.set(1);
             hwlib::wait_us(800);
@@ -33,6 +42,10 @@ namespace irlib{
             hwlib::wait_us(wait_us_time); //pause
         }
         
+        /// \brief   
+        /// send end signal
+        /// \details
+        /// Use this function to send the end signal.
         void pulse_end(){
             transmitter.set(1);
             hwlib::wait_us(2400);
@@ -42,6 +55,10 @@ namespace irlib{
 
         }
         
+        /// \brief   
+        /// send a 0
+        /// \details
+        /// Use this function to send a 0.
         void pulse_null(){
             hwlib::wait_us(600); //fisrt half of null
             transmitter.set(1);
@@ -51,6 +68,10 @@ namespace irlib{
             hwlib::wait_us(wait_us_time); //pause
         }
         
+        /// \brief   
+        /// send a 1
+        /// \details
+        /// Use this function to send a 1.
         void pulse_one(){
             transmitter.set(1);
             hwlib::wait_us(1200);
@@ -59,16 +80,17 @@ namespace irlib{
             hwlib::wait_us(wait_us_time); //pause
         }
         
+        /// \brief   
+        /// send an unsigned int
+        /// \details
+        /// Use this function to send an unsigned int. this also includes the head and end sign.
         void sent_uint(unsigned int n){
             unsigned int m [32]; 
             std::fill(m, m+32, 0);
             unsigned int count = 0;
-//            std::bitset <32> b = n;
-//            b.flip();
             
             while(n != 0){
             m[count] = (n & 1);
-//            hwlib::cout << (n & 1) << " n: " << n << "\n";
 
             n >>= 1;
             count++;
@@ -81,7 +103,6 @@ namespace irlib{
                 if(m[i] == 2){
                     i--;
                     for(int j = i; j >= 0; j--){
-//                            hwlib::cout << m[j] << " test " << j << "\n";
                         if(m[j]){
                             pulse_one();
                         } else {

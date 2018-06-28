@@ -274,7 +274,7 @@ Discarded input sections
  .text._Z10catch_headRN5hwlib6pin_inERNS_7pin_outE
                 0x00000000      0x10a main.o
  .text._Z8transmitRN5irlib14irlib_transmitERN3due6pin_inE
-                0x00000000       0x22 main.o
+                0x00000000       0x24 main.o
  .bss._ZZN3due9now_ticksEvE4high
                 0x00000000        0x8 main.o
  .bss._ZZN3due9now_ticksEvE8last_low

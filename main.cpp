@@ -67,23 +67,7 @@ void recieve_now(irlib::irlib_recieve & recieve, hwlib::pin_out & green_led, hwl
 void transmit(irlib::irlib_transmit & transmitter, hwlib::target::pin_in & button){
     while(1){
        if(!button.get()){
-           transmitter.sent_uint(200);
-//           transmitter.pulse_head();
-//            ////////////////////////////////////
-//               transmitter.pulse_one();
-//               transmitter.pulse_null();    
-//                
-//                transmitter.pulse_one();
-//               transmitter.pulse_null(); 
-// 
-//               transmitter.pulse_one();
-//               transmitter.pulse_null(); 
-// 
-//               transmitter.pulse_one();
-//               transmitter.pulse_null(); 
-// 
-//            ////////////////////////////////////              
-//           transmitter.pulse_end();
+           transmitter.sent_uint(35476);
        }
        hwlib::wait_us(10);
    }

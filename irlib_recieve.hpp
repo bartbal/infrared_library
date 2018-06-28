@@ -6,6 +6,7 @@
 // ==========================================================================
 
 // this file contains Doxygen lines
+/// @file
 #include <array>
 namespace irlib{
     
@@ -13,18 +14,29 @@ namespace irlib{
         hwlib::target::pin_in reciever;
         int wait_us_time;
         
-        public:
+    public:
         
+        /// \brief   
+        /// recieve interface
+        /// \details
+        /// This class receives data that is being send with the irlib_transmit class
         irlib_recieve(hwlib::target::pin_in & reciever, int wait_us_time = 600):
             reciever( reciever ),
             wait_us_time( wait_us_time )
         {}
         
-    
+        /// \brief   
+        /// get override
+        /// \details
+        /// Get had to be overriten. function didn't change from origional hwlib::pin_in.get(hwlib::buffering)
         bool get(hwlib::buffering) override{
             return reciever.get();
         }
         
+        /// \brief   
+        /// catch data after
+        /// \details
+        /// this function handels everything after the head. to catch the head use the irlib::listen_for_head() function
         unsigned int catch_data(){
             int temp = 1;
             unsigned int data = 0;
@@ -45,12 +57,15 @@ namespace irlib{
                 data += (temp<<i);
                 temp = 1;
             }
-            hwlib::cout << data << "  --  " << i << "\n";
             data = data>>(i+1);
             
             return data;
         }
         
+        /// \brief   
+        /// wait for the correct head signal
+        /// \details
+        /// This function waits until it detects the correct head signal. when it detects the correct head is returns true.
         bool listen_for_head(){
             uint_fast64_t now = hwlib::now_us();
             while(1){

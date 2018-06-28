@@ -4,7 +4,8 @@
 //
 // ==========================================================================
 
-
+/// @file
 #define IRLIB_ONCE
+
 #include "hwlib.hpp"
 #include "irlib.hpp"
