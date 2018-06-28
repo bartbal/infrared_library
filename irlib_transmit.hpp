@@ -6,6 +6,8 @@
 // ==========================================================================
 
 // this file contains Doxygen lines
+#include <algorithm>
+#include <array>
 #include "hwlib.hpp"
 namespace irlib{
     
@@ -55,6 +57,42 @@ namespace irlib{
             transmitter.set(0);
             
             hwlib::wait_us(wait_us_time); //pause
+        }
+        
+        void sent_uint(unsigned int n){
+            unsigned int m [32]; 
+            std::fill(m, m+32, 0);
+            unsigned int count = 0;
+//            std::bitset <32> b = n;
+//            b.flip();
+            
+            while(n != 0){
+            m[count] = (n & 1);
+//            hwlib::cout << (n & 1) << " n: " << n << "\n";
+
+            n >>= 1;
+            count++;
+            }
+            m[count] = 2;
+            
+            pulse_head();
+            
+            for(int i = 31; i > 0; i--){
+                if(m[i] == 2){
+                    i--;
+                    for(int j = i; j >= 0; j--){
+//                            hwlib::cout << m[j] << " test " << j << "\n";
+                        if(m[j]){
+                            pulse_one();
+                        } else {
+                            pulse_null();
+                        }                        
+                    }
+                    break;
+                }
+            }
+            
+            pulse_end();
         }
     };   
     

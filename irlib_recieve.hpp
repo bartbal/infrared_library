@@ -25,32 +25,28 @@ namespace irlib{
             return reciever.get();
         }
         
-        unsigned int catch_length(hwlib::pin_out & yellow_led){
+        unsigned int catch_data(){
             int temp = 1;
             unsigned int data = 0;
-            unsigned int i = 32;
+            unsigned int i = 31;
             for(; i > 0; i--){
                 for(unsigned int j = 0; j < 2; j++){
                     hwlib::wait_us(100);
                     temp = temp & !reciever.get();
                     hwlib::wait_us(500);
                 }
-                data += (temp<<i);
                 
                 hwlib::wait_us(100);
                 if(!reciever.get()){
-                    yellow_led.set(1);
-                    hwlib::wait_us(100);
-                    yellow_led.set(0);
                     break;
                 }
                 hwlib::wait_us(500);
                 
+                data += (temp<<i);
                 temp = 1;
             }
-            
-            
-            data = data>>i;
+            hwlib::cout << data << "  --  " << i << "\n";
+            data = data>>(i+1);
             
             return data;
         }

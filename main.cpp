@@ -55,11 +55,8 @@ void recieve_now(irlib::irlib_recieve & recieve, hwlib::pin_out & green_led, hwl
     while(1){
         if(recieve.listen_for_head()){
             hwlib::wait_us(600);
-//            yellow_led.set(1);
-//            yellow_led.set(0);
-            length = recieve.catch_length(yellow_led);
-//            hwlib::cout << "recieve HEAD! length = " << static_cast<uint16_t>(length) << "\n";
-            hwlib::cout << "recieve HEAD! length = " << length << "\n";
+            length = recieve.catch_data();
+            hwlib::cout << "recieve HEAD! data = " << length << "\n";
             ledstate = !ledstate;
             green_led.set(ledstate);
         }
@@ -70,22 +67,23 @@ void recieve_now(irlib::irlib_recieve & recieve, hwlib::pin_out & green_led, hwl
 void transmit(irlib::irlib_transmit & transmitter, hwlib::target::pin_in & button){
     while(1){
        if(!button.get()){
-           transmitter.pulse_head();
-            ////////////////////////////////////
-               transmitter.pulse_one();
-               transmitter.pulse_null();    
-                
-                transmitter.pulse_one();
-               transmitter.pulse_null(); 
- 
-               transmitter.pulse_one();
-               transmitter.pulse_null(); 
- 
-               transmitter.pulse_one();
-               transmitter.pulse_null(); 
- 
-            ////////////////////////////////////              
-           transmitter.pulse_end();
+           transmitter.sent_uint(200);
+//           transmitter.pulse_head();
+//            ////////////////////////////////////
+//               transmitter.pulse_one();
+//               transmitter.pulse_null();    
+//                
+//                transmitter.pulse_one();
+//               transmitter.pulse_null(); 
+// 
+//               transmitter.pulse_one();
+//               transmitter.pulse_null(); 
+// 
+//               transmitter.pulse_one();
+//               transmitter.pulse_null(); 
+// 
+//            ////////////////////////////////////              
+//           transmitter.pulse_end();
        }
        hwlib::wait_us(10);
    }
@@ -108,11 +106,8 @@ int main( void ){
    irlib::irlib_transmit transmitter = irlib::irlib_transmit();
    irlib::irlib_recieve recieve = irlib::irlib_recieve(reciever);
    
-//   auto d2_36khz = due::d2_36kHz();
-//        transmitter.set(1);
-//    transmitter.set(0);
+
     recieve_now(recieve, green_led, yellow_led);
-//    fast_recieve(reciever, yellow_led, button);
 //    transmit(transmitter, button);
 
 }
