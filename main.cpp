@@ -51,7 +51,7 @@ bool catch_head(hwlib::pin_in & reciever,  hwlib::pin_out & led){
 
 void recieve_now(irlib::irlib_recieve & recieve, hwlib::pin_out & green_led, hwlib::pin_out & yellow_led, int ms = 200){
     int ledstate = 0;
-    int length = 0;
+    unsigned int length = 0;
     while(1){
         if(recieve.listen_for_head()){
             hwlib::wait_us(600);
@@ -76,19 +76,14 @@ void transmit(irlib::irlib_transmit & transmitter, hwlib::target::pin_in & butto
                transmitter.pulse_null();    
                 
                 transmitter.pulse_one();
-               transmitter.pulse_null();  
+               transmitter.pulse_null(); 
+ 
                transmitter.pulse_one();
-               transmitter.pulse_null();  
+               transmitter.pulse_null(); 
+ 
                transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
-               transmitter.pulse_one();
-               transmitter.pulse_null();  
+               transmitter.pulse_null(); 
+ 
             ////////////////////////////////////              
            transmitter.pulse_end();
        }

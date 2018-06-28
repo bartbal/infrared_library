@@ -25,10 +25,11 @@ namespace irlib{
             return reciever.get();
         }
         
-        int catch_length(hwlib::pin_out & yellow_led){
+        unsigned int catch_length(hwlib::pin_out & yellow_led){
             int temp = 1;
-            int data = 0;
-            for(unsigned int i = 7; i > 0; i--){
+            unsigned int data = 0;
+            unsigned int i = 32;
+            for(; i > 0; i--){
                 for(unsigned int j = 0; j < 2; j++){
                     hwlib::wait_us(100);
                     temp = temp & !reciever.get();
@@ -41,13 +42,16 @@ namespace irlib{
                     yellow_led.set(1);
                     hwlib::wait_us(100);
                     yellow_led.set(0);
-                    hwlib::cout << reciever.get() << " i'm broken i'm broken" << data << "\n";
                     break;
                 }
                 hwlib::wait_us(500);
                 
                 temp = 1;
             }
+            
+            
+            data = data>>i;
+            
             return data;
         }
         
