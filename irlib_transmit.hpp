@@ -16,24 +16,24 @@
 #include "hwlib.hpp"
 namespace irlib{
     
-    class irlib_transmit : public due::d2_36kHz {
+    class transmit : public due::d2_36kHz {
         int wait_us_time;
         due::d2_36kHz transmitter = due::d2_36kHz();
 
     public:
         
         /// \brief   
-        /// transmit interface
+        /// Transmit interface
         /// \details
         /// This class handels everything to transmit data over infrared
-        irlib_transmit(int wait_us_time = 600):
+        transmit(int wait_us_time = 600):
             wait_us_time( wait_us_time )
         {}
         
         /// \brief   
-        /// send head signal
+        /// Send head signal
         /// \details
-        /// use this function to send the head signal. 
+        /// Use this function to send the head signal. 
         void pulse_head(){
             transmitter.set(1);
             hwlib::wait_us(800);
@@ -47,7 +47,7 @@ namespace irlib{
         }
         
         /// \brief   
-        /// send end signal
+        /// Send end signal
         /// \details
         /// Use this function to send the end signal.
         void pulse_end(){
@@ -60,7 +60,7 @@ namespace irlib{
         }
         
         /// \brief   
-        /// send a 0
+        /// Send a 0
         /// \details
         /// Use this function to send a 0.
         void pulse_null(){
@@ -73,7 +73,7 @@ namespace irlib{
         }
         
         /// \brief   
-        /// send a 1
+        /// Send a 1
         /// \details
         /// Use this function to send a 1.
         void pulse_one(){
@@ -85,19 +85,19 @@ namespace irlib{
         }
         
         /// \brief   
-        /// send an unsigned int
+        /// Send an unsigned int
         /// \details
-        /// Use this function to send an unsigned int. this also includes the head and end sign.
-        void sent_uint(unsigned int n){
+        /// Use this function to send an unsigned int. This also includes the head and end sign.
+        void send_uint(unsigned int n){
             unsigned int m [32]; 
             std::fill(m, m+32, 0);
             unsigned int count = 0;
             
             while(n != 0){
-            m[count] = (n & 1);
+                m[count] = (n & 1);
 
-            n >>= 1;
-            count++;
+                n >>= 1;
+                count++;
             }
             m[count] = 2;
             
@@ -117,6 +117,77 @@ namespace irlib{
                 }
             }
             
+            pulse_end();
+        }
+        
+        /// \brief   
+        /// Send an unsigned int
+        /// \details
+        /// Use this function to send an unsigned int. This function does not send a head and end signal.
+        void send_uint_withoud_end_head(unsigned int n){
+            unsigned int m [32]; 
+            std::fill(m, m+32, 0);
+            unsigned int count = 0;
+            
+            while(n != 0){
+                m[count] = (n & 1);
+
+                n >>= 1;
+                count++;
+            }
+            m[count] = 2;
+                        
+            for(int i = 31; i > 0; i--){
+                if(m[i] == 2){
+                    i--;
+                    for(int j = i; j >= 0; j--){
+                        if(m[j]){
+                            pulse_one();
+                        } else {
+                            pulse_null();
+                        }                        
+                    }
+                    break;
+                }
+            }
+            
+        }
+        
+        /// \brief   
+        /// Send a char
+        /// \details
+        /// Use this function to send a char. This also includes the head and end sign.
+        void send_char(char n){
+            send_uint((unsigned int)n);
+        }
+        
+        /// \brief   
+        /// Send a char*
+        /// \details
+        /// Use this function to send a char*. This also includes the head and end sign.
+        void send_string(char const * n){
+            int count = 0;
+            pulse_head();
+            for(char const * i = n; *i; i++) {
+                send_uint_withoud_end_head(n[count]);
+                count++;
+            }
+            send_uint_withoud_end_head(0);
+            pulse_end();
+        }
+        
+        /// \brief   
+        /// Send an uint*
+        /// \details
+        /// Use this function to send an uint*. This also includes the head and end sign.
+        void send_uint_array(unsigned int *n){
+            int count = 0;
+            pulse_head();
+            for(unsigned int * i = n; *i; i++) {
+                send_uint_withoud_end_head(n[count]);
+                count++;
+            }
+            send_uint_withoud_end_head(0);
             pulse_end();
         }
     };   

@@ -30,11 +30,11 @@
   <Dependencies/>
   <VirtualDirectory Name="source">
     <File Name="main.cpp"/>
-    <File Name="catch.hpp"/>
     <File Name="irlib.cpp"/>
     <File Name="irlib.hpp"/>
     <File Name="irlib_recieve.hpp"/>
     <File Name="irlib_transmit.hpp"/>
+    <File Name="laser_game.hpp"/>
     <File Name="old_back.cpp"/>
     <File Name="test_recieve.cpp"/>
     <File Name="test_transmitter.cpp"/>

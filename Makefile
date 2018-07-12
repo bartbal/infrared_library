@@ -9,7 +9,7 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := irlib.cpp
+SOURCES := irlib.cpp 
 
 # header files in this project
 HEADERS := irlib.hpp irlib_recieve.hpp irlib_transmit.hpp
